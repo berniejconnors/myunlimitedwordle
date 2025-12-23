@@ -46,7 +46,7 @@
     .key.absent{background:var(--absent);border-color:var(--absent)}
 
     .msg{min-height:24px;text-align:center;color:var(--muted);font-weight:600}
-    .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#22252b;border:1px solid var(--tile-border);padding:10px 14px;border-radius:10px;color:var(--fg);font-weight:700;opacity:0}
+    .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#22252b;border:1px solid var(--tile-border);padding:10px 14px;border-radius:10px;color:var(--fg);font-weight:700;opaci[...] 
     .toast.show{opacity:1;animation:fade 1.8s ease}
     @keyframes fade{0%{opacity:0;transform:translate(-50%,-8px)}10%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
 
@@ -166,7 +166,7 @@ const GUESSES = [
   "aahed","aalii","aargh","aarti","abaca","abaci","abacs","abaft","abaka","abamp","aband","abash","abask","abaya","abbas","abbed","abbes","abcee","abeam","abear","abele","abers","abets","abies","abler"...
 ];
 
-function initGameState() {
+  function initGameState() {
   board = Array.from({ length: ROWS }, () => Array(COLS).fill(''));
   marks = Array.from({ length: ROWS }, () => Array(COLS).fill(''));
   kbState = {};
@@ -176,64 +176,64 @@ function initGameState() {
   lastResultSquares = '';
 }
 
-function pickWord(){
-  const list = (ANSWERS && ANSWERS.length ? ANSWERS : SEED);
-  if(dailyToggle && dailyToggle.checked){
-    const ds = new Date();
-    const y=ds.getFullYear(), m=ds.getMonth()+1, d=ds.getDate();
-    const key = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-    let h=0; for(let i=0;i<key.length;i++){ h = (h*31 + key.charCodeAt(i)) >>> 0; }
-    const idx = h % list.length;
-    return list[idx];
-  }
-  return list[Math.floor(Math.random()*list.length)];
-}
-
-function reset(newWord=true){
-  if(newWord){ solution = pickWord(); }
-  row=0; col=0; gameOver=false;
-  board = Array.from({length:ROWS},()=>Array(COLS).fill(''));
-  marks = Array.from({length:ROWS},()=>Array(COLS).fill(''));
-  kbState = {}; lastResultSquares='';
-  renderBoard(); renderKeyboard(); renderStats();
-  setMsg('Type a 5-letter word.');
-}
-
-// Build static board
-function renderBoard(){
-  boardEl.innerHTML='';
-  for(let r=0;r<ROWS;r++){
-    const rowEl=document.createElement('div'); rowEl.className='row';
-    for(let c=0;c<COLS;c++){
-      const t=document.createElement('div'); t.className='tile';
-      const ch=board[r][c]; if(ch) t.classList.add('filled'); t.textContent=ch;
-      const m=marks[r][c]; if(m) t.classList.add(m);
-      rowEl.appendChild(t);
+  function pickWord(){
+    const list = (ANSWERS && ANSWERS.length ? ANSWERS : SEED);
+    if(dailyToggle && dailyToggle.checked){
+      const ds = new Date();
+      const y=ds.getFullYear(), m=ds.getMonth()+1, d=ds.getDate();
+      const key = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      let h=0; for(let i=0;i<key.length;i++){ h = (h*31 + key.charCodeAt(i)) >>> 0; }
+      const idx = h % list.length;
+      return list[idx];
     }
-    boardEl.appendChild(rowEl);
+    return list[Math.floor(Math.random()*list.length)];
   }
-}
 
-// Build keyboard layout
-const L1 = 'qwertyuiop'.split('');
-const L2 = 'asdfghjkl'.split('');
-const L3 = 'zxcvbnm'.split('');
-function renderKeyboard(){
-  keyboardEl.innerHTML='';
-  const rows=[L1,L2,L3];
-  rows.forEach((letters,i)=>{
-    const row=document.createElement('div'); row.className='kb-row';
-    if(i===2){ addKey(row,'enter','Enter',3); }
-    letters.forEach(l=> addKey(row,l,l,2));
-    if(i===2){ addKey(row,'back','⌫',3); }
-    keyboardEl.appendChild(row);
-  });
-  // apply coloring
-  for(const [k,v] of Object.entries(kbState)){
-    const el = keyboardEl.querySelector('[data-key="'+k+'"]');
-    if(!el) continue; el.classList.remove('absent','present','correct'); el.classList.add(v);
+  function reset(newWord=true){
+    if(newWord){ solution = pickWord(); }
+    row=0; col=0; gameOver=false;
+    board = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+    marks = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+    kbState = {}; lastResultSquares='';
+    renderBoard(); renderKeyboard(); renderStats();
+    setMsg('Type a 5-letter word.');
   }
-}
+
+  // Build static board
+  function renderBoard(){
+    boardEl.innerHTML='';
+    for(let r=0;r<ROWS;r++){
+      const rowEl=document.createElement('div'); rowEl.className='row';
+      for(let c=0;c<COLS;c++){
+        const t=document.createElement('div'); t.className='tile';
+        const ch=board[r][c]; if(ch) t.classList.add('filled'); t.textContent=ch;
+        const m=marks[r][c]; if(m) t.classList.add(m);
+        rowEl.appendChild(t);
+      }
+      boardEl.appendChild(rowEl);
+    }
+  }
+
+  // Build keyboard layout
+  const L1 = 'qwertyuiop'.split('');
+  const L2 = 'asdfghjkl'.split('');
+  const L3 = 'zxcvbnm'.split('');
+  function renderKeyboard(){
+    keyboardEl.innerHTML='';
+    const rows=[L1,L2,L3];
+    rows.forEach((letters,i)=>{
+      const row=document.createElement('div'); row.className='kb-row';
+      if(i===2){ addKey(row,'enter','Enter',3); }
+      letters.forEach(l=> addKey(row,l,l,2));
+      if(i===2){ addKey(row,'back','⌫',3); }
+      keyboardEl.appendChild(row);
+    });
+    // apply coloring
+    for(const [k,v] of Object.entries(kbState)){
+      const el = keyboardEl.querySelector('[data-key="'+k+'"]');
+      if(!el) continue; el.classList.remove('absent','present','correct'); el.classList.add(v);
+    }
+  }
 function addKey(row, code, label, span){
   const b = document.createElement('div');
   b.className = 'key' + (span===3 ? ' wide' : ' small');
@@ -242,205 +242,199 @@ function addKey(row, code, label, span){
   // Removed: b.addEventListener('click',()=>handleKey(code));
   row.appendChild(b);
 }
-function isValidGuess(word){
-  const wordRe = new RegExp('^[a-z]{5}$');
-  if(!wordRe.test(word)) return false;
-  if (strictToggle && strictToggle.checked) {
-    return Array.isArray(ANSWERS) && ANSWERS.includes(word);
-  }
-  return (Array.isArray(GUESSES) && GUESSES.includes(word)) ||
-         (Array.isArray(ANSWERS) && ANSWERS.includes(word));
-}
-
-// Physical keyboard
-window.addEventListener('keydown', (e)=>{
-  const k=e.key.toLowerCase();
-  if(k==='enter'||k==='backspace'||(k.length===1 && k>='a' && k<='z')){
-    e.preventDefault(); handleKey(k==='backspace'?'back':k);
-  }
-});
-
-function handleKey(k){
-  if(gameOver && k!=='enter'){ return; }
-  if(k==='enter'){ submitRow(); return; }
-  if(k==='back'){ if(col>0){ col--; board[row][col]=''; renderBoard(); } return; }
-  if(k.length===1 && k>='a' && k<='z' && col<COLS){ board[row][col]=k; col++; renderBoard(); return; }
-}
-
-function submitRow(){
-  if(col<COLS){ toast('Not enough letters'); return; }
-  const guess = board[row].join('');
-
-  // Guess dictionary rules
-  if(!isValidGuess(guess)){
-    toast('Not in word list');
-    return;
-  }
-
-  // Hard mode constraints
-  if(hardToggle && hardToggle.checked && row>0){
-    const prev = marks[row-1];
-    for(let i=0;i<COLS;i++){
-      if(prev[i]==='correct' && guess[i]!==board[row-1][i]){ toast('Hard mode: keep green letters in place'); return; }
-      if(prev[i]==='present' && !guess.includes(board[row-1][i])){ toast('Hard mode: include revealed yellow letters'); return; }
+  function isValidGuess(word){
+    const wordRe = new RegExp('^[a-z]{5}$');
+    if(!wordRe.test(word)) return false;
+    if (strictToggle && strictToggle.checked) {
+      return Array.isArray(ANSWERS) && ANSWERS.includes(word);
     }
+    return (Array.isArray(GUESSES) && GUESSES.includes(word)) ||
+           (Array.isArray(ANSWERS) && ANSWERS.includes(word));
   }
 
-  // Super-hard constraints
-  if(superHardToggle && superHardToggle.checked && row>0){
-    // 1) Yellows must MOVE: any letter that was yellow at pos i previously cannot be placed at i again
-    for(let r=0;r<row;r++){
+  // Physical keyboard
+  window.addEventListener('keydown', (e)=>{
+    const k=e.key.toLowerCase();
+    if(k==='enter'||k==='backspace'||(k.length===1 && k>='a' && k<='z')){
+      e.preventDefault(); handleKey(k==='backspace'?'back':k);
+    }
+  });
+
+  function handleKey(k){
+    if(gameOver && k!=='enter'){ return; }
+    if(k==='enter'){ submitRow(); return; }
+    if(k==='back'){ if(col>0){ col--; board[row][col]=''; renderBoard(); } return; }
+    if(k.length===1 && k>='a' && k<='z' && col<COLS){ board[row][col]=k; col++; renderBoard(); return; }
+  }
+
+  function submitRow(){
+    if(col<COLS){ toast('Not enough letters'); return; }
+    const guess = board[row].join('');
+
+    // Guess dictionary rules
+    if(!isValidGuess(guess)){
+      toast('Not in word list');
+      return;
+    }
+
+    // Hard mode constraints
+    if(hardToggle && hardToggle.checked && row>0){
+      const prev = marks[row-1];
       for(let i=0;i<COLS;i++){
-        if(marks[r][i]==='present' && guess[i]===board[r][i]){
-          toast('Super-hard: yellow letters must move');
+        if(prev[i]==='correct' && guess[i]!==board[row-1][i]){ toast('Hard mode: keep green letters in place'); return; }
+        if(prev[i]==='present' && !guess.includes(board[row-1][i])){ toast('Hard mode: include revealed yellow letters'); return; }
+      }
+    }
+
+    // Super-hard constraints
+    if(superHardToggle && superHardToggle.checked && row>0){
+      // 1) Yellows must MOVE: any letter that was yellow at pos i previously cannot be placed at i again
+      for(let r=0;r<row;r++){
+        for(let i=0;i<COLS;i++){
+          if(marks[r][i]==='present' && guess[i]===board[r][i]){
+            toast('Super-hard: yellow letters must move');
+            return;
+          }
+        }
+      }
+      // 2) No repeating gray letters (unless later upgraded)
+      for(const ch of guess){
+        if(kbState[ch]==='absent'){
+          toast('Super-hard: gray letters are banned later');
           return;
         }
       }
     }
-    // 2) No repeating gray letters (unless later upgraded)
-    for(const ch of guess){
-      if(kbState[ch]==='absent'){
-        toast('Super-hard: gray letters are banned later');
-        return;
+
+    scoreRow(guess);
+  }
+
+  function scoreRow(guess){
+    const sol = solution;
+    const res = Array(COLS).fill('absent');
+
+    // Count letters in solution
+    const counts={}; for(const ch of sol){ counts[ch]=(counts[ch]||0)+1; }
+
+    // First pass: correct
+    for(let i=0;i<COLS;i++){
+      if(guess[i]===sol[i]){ res[i]='correct'; counts[guess[i]]--; }
+    }
+    // Second pass: present
+    for(let i=0;i<COLS;i++){
+      if(res[i]==='correct') continue;
+      const ch=guess[i];
+      if(counts[ch]>0){ res[i]='present'; counts[ch]--; }
+    }
+
+    // Write marks and animate
+    marks[row]=res;
+    revealRow(row);
+
+    // Update keyboard best state (set gray on first sight, only upgrade after)
+    for (let i = 0; i < COLS; i++) {
+      const ch = guess[i];
+      const order = { absent: 0, present: 1, correct: 2 };
+      const prev = kbState[ch]; // leave undefined if unseen
+
+      // If unseen, set whatever we have (including 'absent').
+      // If seen, only upgrade (present > absent, correct > present).
+      if (prev === undefined || order[res[i]] > order[prev]) {
+        kbState[ch] = res[i];
       }
     }
+    renderKeyboard();
+
+    // Win/lose
+    if(guess===sol){
+      gameOver=true; setMsg('You got it in '+(row+1)+'/6! The word was "'+sol.toUpperCase()+'".');
+      confetti();
+      finalizeStats(true,row+1);
+      lastResultSquares = buildShareSquares(marks, row);
+      return;
+    }
+    if(row===ROWS-1){
+      gameOver=true; setMsg('Out of tries. The word was "'+sol.toUpperCase()+'".');
+      finalizeStats(false,ROWS);
+      lastResultSquares = buildShareSquares(marks, row);
+      return;
+    }
+
+    row++; col=0; setMsg('Keep going…');
   }
 
-  scoreRow(guess);
-}
-
-function scoreRow(guess){
-  const sol = solution;
-  const res = Array(COLS).fill('absent');
-
-  // Count letters in solution
-  const counts={}; for(const ch of sol){ counts[ch]=(counts[ch]||0)+1; }
-
-  // First pass: correct
-  for(let i=0;i<COLS;i++){
-    if(guess[i]===sol[i]){ res[i]='correct'; counts[guess[i]]--; }
-  }
-  // Second pass: present
-  for(let i=0;i<COLS;i++){
-    if(res[i]==='correct') continue;
-    const ch=guess[i];
-    if(counts[ch]>0){ res[i]='present'; counts[ch]--; }
+  function revealRow(r){
+    const rowEl = boardEl.children[r];
+    [...rowEl.children].forEach((tile,i)=>{
+      setTimeout(()=>{
+        tile.classList.add('reveal');
+        tile.classList.add(marks[r][i]);
+      }, i*220);
+    });
   }
 
-  // Write marks and animate
-  marks[row]=res;
-  revealRow(row);
-
-// Update keyboard best state (set gray on first sight, only upgrade after)
-for (let i = 0; i < COLS; i++) {
-  const ch = guess[i];
-  const order = { absent: 0, present: 1, correct: 2 };
-  const prev = kbState[ch]; // leave undefined if unseen
-
-  // If unseen, set whatever we have (including 'absent').
-  // If seen, only upgrade (present > absent, correct > present).
-  if (prev === undefined || order[res[i]] > order[prev]) {
-    kbState[ch] = res[i];
-  }
-}
-renderKeyboard();
-
-  // Win/lose
-  if(guess===sol){
-    gameOver=true; setMsg('You got it in '+(row+1)+'/6! The word was "'+sol.toUpperCase()+'".');
-    confetti();
-    finalizeStats(true,row+1);
-    lastResultSquares = buildShareSquares(marks, row);
-    return;
-  }
-  if(row===ROWS-1){
-    gameOver=true; setMsg('Out of tries. The word was "'+sol.toUpperCase()+'".');
-    finalizeStats(false,ROWS);
-    lastResultSquares = buildShareSquares(marks, row);
-    return;
+  function buildShareSquares(allMarks, uptoRow){
+    const map={absent:'\u2B1B',present:'\uD83D\uDFE8',correct:'\uD83D\uDFE9'}; // black, yellow, green
+    let out='';
+    for(let r=0;r<=uptoRow;r++){
+      out += allMarks[r].map(m=>map[m]||'\u2B1C').join('') + (r<uptoRow?'\n':'');
+    }
+    return out;
   }
 
-  row++; col=0; setMsg('Keep going…');
-}
+  // Simple canvas confetti
+  function confetti(){
+    const c=document.createElement('canvas'); c.width=window.innerWidth; c.height=200; c.style.cssText='position:fixed;top:0;left:0;pointer-events:none;'; document.body.appendChild(c);
+    const ctx=c.getContext('2d');
+    const parts = Array.from({length:140},()=>({x:Math.random()*c.width,y:-20-Math.random()*200,vy:2+Math.random()*3,vx:(Math.random()-.5)*2,s:4+Math.random()*4,rot:Math.random()*6}));
+    let t=0; const colors=['#538d4e','#b59f3b','#6ea8fe','#ffffff'];
+    (function loop(){ t++; ctx.clearRect(0,0,c.width,c.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.rot+=.1; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=colors[(p.s|0)%[...]
+  }
 
-function revealRow(r){
-  const rowEl = boardEl.children[r];
-  [...rowEl.children].forEach((tile,i)=>{
-    setTimeout(()=>{
-      tile.classList.add('reveal');
-      tile.classList.add(marks[r][i]);
-    }, i*220);
+  function finalizeStats(win,guesses){
+    const s=loadStatsFor(COLS);
+    s.played++; if(win){ s.wins++; s.streak++; if(s.streak>s.best) s.best=s.streak; } else { s.streak=0; }
+    saveStatsFor(COLS,s); renderStats();
+  }
+  function renderStats(){
+    const s=loadStatsFor(COLS);
+    statsEl.innerHTML='';
+    const mk=(label,val)=>{ const d=document.createElement('div'); d.className='stat'; d.innerHTML='<strong>'+val+'</strong><div style="font-size:.8rem;color:var(--muted)">'+label+'</div>'; return d; };
+    const pct = s.played? Math.round((s.wins/s.played)*100) : 0;
+    statsEl.append(mk('Length',COLS), mk('Played',s.played), mk('Wins',s.wins), mk('Win %',pct+'%'), mk('Streak',s.streak), mk('Best',s.best));
+  }
+
+  // Share button
+  shareBtn.addEventListener('click',()=>{
+    if(!lastResultSquares){ toast('Nothing to share yet'); return; }
+    const modeBits = [
+      hardToggle && hardToggle.checked ? 'H' : '',
+      strictToggle && strictToggle.checked ? 'S' : '',
+      superHardToggle && superHardToggle.checked ? 'X' : '',
+      dailyToggle && dailyToggle.checked ? 'D' : ''
+    ].filter(Boolean).join('');
+    const text = 'Unlimited Wordle L'+COLS+(modeBits?'-'+modeBits:'')+' - '+new Date().toLocaleDateString()+'\n'+lastResultSquares;
+    navigator.clipboard.writeText(text).then(()=>toast('Copied results to clipboard')).catch(()=>toast('Copy failed'));
   });
-}
 
-function buildShareSquares(allMarks, uptoRow){
-  const map={absent:'\u2B1B',present:'\uD83D\uDFE8',correct:'\uD83D\uDFE9'}; // black, yellow, green
-  let out='';
-  for(let r=0;r<=uptoRow;r++){
-    out += allMarks[r].map(m=>map[m]||'\u2B1C').join('') + (r<uptoRow?'\n':'');
-  }
-  return out;
-}
+  // On-screen keyboard + toggle listeners
+  keyboardEl.addEventListener('click',(e)=>{
+    const k=e.target.closest('.key'); if(!k) return; const code=k.dataset.key; if(code) handleKey(code);
+  });
+  dailyToggle && dailyToggle.addEventListener('change',()=>{ reset(true); toast('Daily seed '+(dailyToggle.checked?'enabled':'disabled')); });
+  strictToggle && strictToggle.addEventListener('change',()=>{ toast('Strict mode '+(strictToggle.checked?'on':'off')); });
+  superHardToggle && superHardToggle.addEventListener('change',()=>{ toast('Super-hard '+(superHardToggle.checked?'on':'off')); });
 
-// Simple canvas confetti
-function confetti(){
-  const c=document.createElement('canvas'); c.width=window.innerWidth; c.height=200; c.style.cssText='position:fixed;top:0;left:0;pointer-events:none;'; document.body.appendChild(c);
-  const ctx=c.getContext('2d');
-  const parts = Array.from({length:140},()=>({x:Math.random()*c.width,y:-20-Math.random()*200,vy:2+Math.random()*3,vx:(Math.random()-.5)*2,s:4+Math.random()*4,rot:Math.random()*6}));
-  let t=0; const colors=['#538d4e','#b59f3b','#6ea8fe','#ffffff'];
-  (function loop(){ t++; ctx.clearRect(0,0,c.width,c.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.rot+=.1; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=colors[(p.s|0)%[...]
-}
-
-function finalizeStats(win,guesses){
-  const s=loadStatsFor(COLS);
-  s.played++; if(win){ s.wins++; s.streak++; if(s.streak>s.best) s.best=s.streak; } else { s.streak=0; }
-  saveStatsFor(COLS,s); renderStats();
-}
-function renderStats(){
-  const s=loadStatsFor(COLS);
-  statsEl.innerHTML='';
-  const mk=(label,val)=>{ const d=document.createElement('div'); d.className='stat'; d.innerHTML='<strong>'+val+'</strong><div style="font-size:.8rem;color:var(--muted)">'+label+'</div>'; return d; };
-  const pct = s.played? Math.round((s.wins/s.played)*100) : 0;
-  statsEl.append(mk('Length',COLS), mk('Played',s.played), mk('Wins',s.wins), mk('Win %',pct+'%'), mk('Streak',s.streak), mk('Best',s.best));
-}
-
-// Share button
-shareBtn.addEventListener('click',()=>{
-  if(!lastResultSquares){ toast('Nothing to share yet'); return; }
-  const modeBits = [
-    hardToggle && hardToggle.checked ? 'H' : '',
-    strictToggle && strictToggle.checked ? 'S' : '',
-    superHardToggle && superHardToggle.checked ? 'X' : '',
-    dailyToggle && dailyToggle.checked ? 'D' : ''
-  ].filter(Boolean).join('');
-  const text = 'Unlimited Wordle L'+COLS+(modeBits?'-'+modeBits:'')+' - '+new Date().toLocaleDateString()+'\n'+lastResultSquares;
-  navigator.clipboard.writeText(text).then(()=>toast('Copied results to clipboard')).catch(()=>toast('Copy failed'));
-});
-
-// Wire New Game button
-newBtn.addEventListener('click', ()=>{
-  reset(true); // start a new game with a newly picked solution
-  toast('New game started');
-});
-
-// On-screen keyboard + toggle listeners
-keyboardEl.addEventListener('click',(e)=>{
-  const k=e.target.closest('.key'); if(!k) return; const code=k.dataset.key; if(code) handleKey(code);
-});
-dailyToggle && dailyToggle.addEventListener('change',()=>{ reset(true); toast('Daily seed '+(dailyToggle.checked?'enabled':'disabled')); });
-strictToggle && strictToggle.addEventListener('change',()=>{ toast('Strict mode '+(strictToggle.checked?'on':'off')); });
-superHardToggle && superHardToggle.addEventListener('change',()=>{ toast('Super-hard '+(superHardToggle.checked?'on':'off')); });
-
-// Initialize: render UI first, then load lists, then pick word
-function init() {
+  // Initialize: render UI first, then load lists, then pick word
+  function init() {
   solution = pickWord();
   initGameState();        // ✅ THIS WAS MISSING
   renderBoard();
   renderKeyboard();
   renderStats?.();
   setMsg('Type a 5-letter word.');
-}
-init();
+  }
+  init();
 })();
 </script>
 
