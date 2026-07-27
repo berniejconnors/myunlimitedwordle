@@ -187,16 +187,24 @@ const GUESSES = ["aahed","aalii","aapas","aargh","aarti","abaca","abaci","aback"
     return list[Math.floor(Math.random()*list.length)];
   }
 
-  function reset(newWord=true){
-    if(newWord){ solution = pickWord(); }
-    row=0; col=0; gameOver=false;
-    board = Array.from({length:ROWS},()=>Array(COLS).fill(''));
-    marks = Array.from({length:ROWS},()=>Array(COLS).fill(''));
-    kbState = {}; lastResultSquares='';
-    renderBoard(); renderKeyboard(); renderStats();
-    setMsg('Type a 5-letter word.');
-  }
-
+function reset(newWord=true){
+  if(newWord){ solution = pickWord(); }
+  row=0; col=0; gameOver=false;
+  board = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+  marks = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+  kbState = {}; lastResultSquares='';
+  
+  // Sync hardMode state with the checkbox value on reset
+  hardMode = hardToggle.checked;
+  hardToggle.addEventListener('change', () => {
+    hardMode = hardToggle.checked;
+  });
+  hardToggle.disabled = false;
+  
+  renderBoard(); renderKeyboard(); renderStats();
+  setMsg('Type a 5-letter word.');
+}
+  
   // Build static board
   function renderBoard(){
     boardEl.innerHTML='';
