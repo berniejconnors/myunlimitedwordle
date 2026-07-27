@@ -421,6 +421,9 @@ function addKey(row, code, label, span){
   strictToggle && strictToggle.addEventListener('change',()=>{ toast('Strict mode '+(strictToggle.checked?'on':'off')); });
   superHardToggle && superHardToggle.addEventListener('change',()=>{ toast('Super-hard '+(superHardToggle.checked?'on':'off')); });
 
+  newBtn.addEventListener('click', () => {
+    reset(true);
+  });
   // Initialize: render UI first, then load lists, then pick word
   function init() {
   solution = pickWord();
