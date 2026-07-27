@@ -196,10 +196,11 @@ function reset(newWord=true){
   
   // Sync hardMode state with the checkbox value on reset
   hardMode = hardToggle.checked;
-  hardToggle.addEventListener('change', () => {
-    hardMode = hardToggle.checked;
+  hardToggle.addEventListener('change', (e) => {
+    hardMode = e.target.checked;
   });
   hardToggle.disabled = false;
+  hardMode = hardToggle.checked;
   
   renderBoard(); renderKeyboard(); renderStats();
   setMsg('Type a 5-letter word.');
