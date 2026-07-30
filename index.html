@@ -388,15 +388,48 @@ function addKey(row, code, label, span){
     return out;
   }
 
-  // Simple canvas confetti
-  function confetti(){
-    const c=document.createElement('canvas'); c.width=window.innerWidth; c.height=200; c.style.cssText='position:fixed;top:0;left:0;pointer-events:none;'; document.body.appendChild(c);
-    const ctx=c.getContext('2d');
-    const parts = Array.from({length:140},()=>({x:Math.random()*c.width,y:-20-Math.random()*200,vy:2+Math.random()*3,vx:(Math.random()-.5)*2,s:4+Math.random()*4,rot:Math.random()*6}));
-    let t=0; const colors=['#538d4e','#b59f3b','#6ea8fe','#ffffff'];
-    (function loop(){ t++; ctx.clearRect(0,0,c.width,c.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.rot+=.1; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=colors[(p.s|0)%colors.length]; ctx.fillRect(0,0,p.s,p.s); ctx.restore(); }); t<150 && requestAnimationFrame(loop); setTimeout(()=>c.remove(),150); })();
-  }
+// Simple canvas confetti (fixed duration)
+function confetti(){
+  const c = document.createElement('canvas');
+  c.width = window.innerWidth;
+  c.height = 200;
+  c.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:9999';
+  document.body.appendChild(c);
+  const ctx = c.getContext('2d');
+  const parts = Array.from({length:140}, () => ({
+    x: Math.random()*c.width,
+    y: -20 - Math.random()*200,
+    vy: 2 + Math.random()*3,
+    vx: (Math.random()-.5)*2,
+    s: 4 + Math.random()*4,
+    rot: Math.random()*6
+  }));
+  let t = 0;
+  const colors = ['#538d4e','#b59f3b','#6ea8fe','#ffffff'];
+  const DURATION_FRAMES = 150; // keep for ~150 frames (~2.5s at 60fps)
 
+  (function loop(){
+    t++;
+    ctx.clearRect(0,0,c.width,c.height);
+    parts.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += 0.1;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = colors[(p.s|0) % colors.length];
+      ctx.fillRect(0, 0, p.s, p.s);
+      ctx.restore();
+    });
+    if (t < DURATION_FRAMES) {
+      requestAnimationFrame(loop);
+    } else {
+      // leave the final frame visible briefly, then remove
+      setTimeout(() => c.remove(), 500);
+    }
+  })();
+}
   function finalizeStats(win,guesses){
     const s=loadStatsFor(COLS);
     s.played++; if(win){ s.wins++; s.streak++; if(s.streak>s.best) s.best=s.streak; } else { s.streak=0; }
