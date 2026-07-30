@@ -114,6 +114,7 @@ let col = 0;
 let solution = '';
 let gameOver = false;
 let lastResultSquares = '';
+let hardMode = false;
 
 function toast(message, duration = 1600) {
   toastEl.textContent = message;
@@ -186,16 +187,25 @@ const GUESSES = ["aahed","aalii","aapas","aargh","aarti","abaca","abaci","aback"
     return list[Math.floor(Math.random()*list.length)];
   }
 
-  function reset(newWord=true){
-    if(newWord){ solution = pickWord(); }
-    row=0; col=0; gameOver=false;
-    board = Array.from({length:ROWS},()=>Array(COLS).fill(''));
-    marks = Array.from({length:ROWS},()=>Array(COLS).fill(''));
-    kbState = {}; lastResultSquares='';
-    renderBoard(); renderKeyboard(); renderStats();
-    setMsg('Type a 5-letter word.');
-  }
-
+function reset(newWord=true){
+  if(newWord){ solution = pickWord(); }
+  row=0; col=0; gameOver=false;
+  board = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+  marks = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+  kbState = {}; lastResultSquares='';
+  
+  // Sync hardMode state with the checkbox value on reset
+  hardMode = hardToggle.checked;
+  hardToggle.addEventListener('change', (e) => {
+    hardMode = e.target.checked;
+  });
+  hardToggle.disabled = false;
+  hardMode = hardToggle.checked;
+  
+  renderBoard(); renderKeyboard(); renderStats();
+  setMsg('Type a 5-letter word.');
+}
+  
   // Build static board
   function renderBoard(){
     boardEl.innerHTML='';
@@ -392,6 +402,7 @@ function addKey(row, code, label, span){
     s.played++; if(win){ s.wins++; s.streak++; if(s.streak>s.best) s.best=s.streak; } else { s.streak=0; }
     saveStatsFor(COLS,s); renderStats();
   }
+  
   function renderStats(){
     const s=loadStatsFor(COLS);
     statsEl.innerHTML='';
@@ -400,6 +411,31 @@ function addKey(row, code, label, span){
     statsEl.append(mk('Length',COLS), mk('Played',s.played), mk('Wins',s.wins), mk('Win %',pct+'%'), mk('Streak',s.streak), mk('Best',s.best));
   }
 
+function validateHardMode(guess) {
+  // Loop through past rows and marks to enforce constraints
+  for (let r = 0; r < row; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const letter = board[r][c];
+      const mark = marks[r][c];
+      
+      // If a letter was correct, it must be in the exact same position
+      if (mark === 'correct' && guess[c] !== letter) {
+        return `${letter.toUpperCase()} must be in column ${c + 1}`;
+      }
+    }
+    
+    // Check if present letters are used anywhere in the new guess
+    for (let c = 0; c < COLS; c++) {
+      const letter = board[r][c];
+      const mark = marks[r][c];
+      if (mark === 'present' && !guess.includes(letter)) {
+        return `Guess must contain ${letter.toUpperCase()}`;
+      }
+    }
+  }
+  return null;
+}
+  
   // Share button
   shareBtn.addEventListener('click',()=>{
     if(!lastResultSquares){ toast('Nothing to share yet'); return; }
@@ -421,9 +457,20 @@ function addKey(row, code, label, span){
   strictToggle && strictToggle.addEventListener('change',()=>{ toast('Strict mode '+(strictToggle.checked?'on':'off')); });
   superHardToggle && superHardToggle.addEventListener('change',()=>{ toast('Super-hard '+(superHardToggle.checked?'on':'off')); });
 
+  // New Game button listener
   newBtn.addEventListener('click', () => {
     reset(true);
   });
+
+  // Hard mode toggle listener
+  if (hardMode) {
+  const hardError = validateHardMode(currentGuess);
+  if (hardError) {
+    toast(hardError);
+    return; // Stop submission
+   }
+  }
+  
   // Initialize: render UI first, then load lists, then pick word
   function init() {
   solution = pickWord();
